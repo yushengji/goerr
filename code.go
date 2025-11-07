@@ -1,4 +1,4 @@
-package fserr
+package goerr
 
 import (
 	"net/http"

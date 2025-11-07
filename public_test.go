@@ -1,12 +1,12 @@
-package fserr
+package goerr
 
 import (
 	"errors"
-	"git.sxidc.com/service-supports/fslog"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 type TestPublicSuite struct {
@@ -35,10 +35,10 @@ func (s *TestPublicSuite) SetupTest() {
 	s.wrapEmptyErr = Wrap(s.newErr, " ")
 
 	// code
-	s.codeErr = WithCode(s.newErr, ErrBasic)
-	s.codeOptionErr = WithCode(s.newErr, ErrBasic, WithMessage("cover message"))
-	s.codeOuterErr = WithCode(s.outerErr, ErrBasic)
-	s.codeNilErr = WithCode(nil, ErrBasic)
+	s.codeErr = WithCode[int64](s.newErr, ErrBasic)
+	s.codeOptionErr = WithCode[int64](s.newErr, ErrBasic, WithMessage("cover message"))
+	s.codeOuterErr = WithCode[int64](s.outerErr, ErrBasic)
+	s.codeNilErr = WithCode[int64](nil, ErrBasic)
 
 	s.stackErr = WithStack(errors.New("stack error"))
 }
@@ -117,21 +117,20 @@ func (s *TestPublicSuite) TestParseCode() {
 }
 
 func (s *TestPublicSuite) TestIsCode() {
-	s.True(IsCode(s.codeErr, ErrBasic))
-	s.False(IsCode(s.codeErr, ErrDb))
-	s.False(IsCode(s.wrapErr, ErrBasic))
+	s.True(IsCode[int64](s.codeErr, ErrBasic))
+	s.False(IsCode[int64](s.codeErr, ErrDb))
+	s.False(IsCode[int64](s.wrapErr, ErrBasic))
 }
 
 func (s *TestPublicSuite) TestSetServiceCode() {
 	SetAppCode(3)
 	NewOK(2001, "ok")
-	err := WithCode(nil, 2001)
+	err := WithCode[int64](nil, 2001)
 	s.Equal(32001, ParseCode(err).BusinessCode)
 }
 
 func (s *TestPublicSuite) TestWithStack() {
 	s.Equal("stack error", s.stackErr.Error())
-	fslog.Error(s.stackErr)
 }
 
 func TestPublic(t *testing.T) {
@@ -141,28 +140,28 @@ func TestPublic(t *testing.T) {
 func TestServiceCode(t *testing.T) {
 	SetAppCode(1)
 	NewInternalError(ErrBasic, "basic error")
-	code := ParseCode(WithCode(nil, ErrBasic))
+	code := ParseCode(WithCode[int64](nil, ErrBasic))
 	assert.Equal(t, "basic error", code.Msg)
 	assert.Equal(t, 10001, code.BusinessCode)
 	assert.Equal(t, http.StatusInternalServerError, code.HttpCode)
 
 	SetAppCode(2)
 	NewBadRequest(ErrDb, "db error")
-	code = ParseCode(WithCode(nil, ErrDb))
+	code = ParseCode(WithCode[int64](nil, ErrDb))
 	assert.Equal(t, "db error", code.Msg)
 	assert.Equal(t, 20002, code.BusinessCode)
 	assert.Equal(t, http.StatusBadRequest, code.HttpCode)
 
 	SetAppCode(3)
 	NewInternalError(ErrParam, "param error")
-	code = ParseCode(WithCode(nil, ErrParam))
+	code = ParseCode(WithCode[int64](nil, ErrParam))
 	assert.Equal(t, "param error", code.Msg)
 	assert.Equal(t, 30003, code.BusinessCode)
 	assert.Equal(t, http.StatusInternalServerError, code.HttpCode)
 
 	SetAppCode(4)
 	NewConflict(ErrRetry, "retry error")
-	code = ParseCode(WithCode(nil, ErrRetry))
+	code = ParseCode(WithCode[int64](nil, ErrRetry))
 	assert.Equal(t, 40004, code.BusinessCode)
 	assert.Equal(t, http.StatusConflict, code.HttpCode)
 	assert.Equal(t, "retry error", code.Msg)

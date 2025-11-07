@@ -1,9 +1,10 @@
-package fserr
+package goerr
 
 import (
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
 type TestCodeSuite struct {

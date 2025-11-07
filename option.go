@@ -1,4 +1,4 @@
-package fserr
+package goerr
 
 type Option func(*withCode)
 

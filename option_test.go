@@ -1,8 +1,9 @@
-package fserr
+package goerr
 
 import (
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
 type TestOptionSuite struct {

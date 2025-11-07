@@ -1,10 +1,11 @@
-package fserr
+package goerr
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
 type TestErrorsSuite struct {

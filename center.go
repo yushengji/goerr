@@ -1,7 +1,6 @@
-package fserr
+package goerr
 
 import (
-	"git.sxidc.com/service-supports/fslog"
 	"github.com/puzpuzpuz/xsync"
 )
 
@@ -17,9 +16,7 @@ func init() {
 
 func register(code ErrCode) {
 	if _, ok := codeMap.Load(code.BusinessCode); ok {
-		fslog.With("code", code.BusinessCode).
-			With("message", code.Message).
-			Warn("duplicate business code")
+		return
 	}
 	codeMap.Store(code.BusinessCode, code)
 }
