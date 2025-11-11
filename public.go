@@ -134,6 +134,11 @@ func SetAppCode[T codeType](code T) {
 	serviceCode.Store(int64(code) * 10000)
 }
 
+// String 获取错误信息及堆栈的字符串信息
+func String(err error) string {
+	return fmt.Sprintf("%+v", err)
+}
+
 // outerMsg 获取最外层的错误信息
 func outerMsg(err error) string {
 	if err == nil {
